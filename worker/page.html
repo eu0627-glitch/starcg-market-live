@@ -115,15 +115,15 @@ $('clearpetlevels').onclick=()=>{selectedPetLevels.clear();petLevelRender();vari
 const savedVillageNeeds=load('starcg-village-needs',[]);
 let villageNeeds=(Array.isArray(savedVillageNeeds)?savedVillageNeeds:[]).filter(r=>villageShops.some(x=>x.id===r.id)&&Number.isSafeInteger(r.quantity)&&r.quantity>0).map(r=>({id:r.id,quantity:r.quantity}));
 function villageNeedRender(){
- $('villageshops').innerHTML=villageNeeds.length?table(villageNeeds,['村莊','物資','需求數量','操作'],n=>{const r=villageShops.find(x=>x.id===n.id);return '<tr><td>'+esc(r.village)+'</td><td>'+esc(r.name)+'</td><td><input type="number" min="1" step="1" data-villageqty="'+esc(n.id)+'" value="'+n.quantity+'" aria-label="'+esc(r.village+' '+r.name)+' 需求數量" style="width:100px"></td><td><button type="button" data-villageremove="'+esc(n.id)+'">移除</button></td></tr>'}):'<p class="hint">選擇村莊與物資、填寫數量後加入；可累積不同村莊的多項需求。</p>';
+ $('villageshops').innerHTML=villageNeeds.length?table(villageNeeds,['村莊','物資','商店售價','需求數量','操作'],n=>{const r=villageShops.find(x=>x.id===n.id);return '<tr><td>'+esc(r.village)+'</td><td>'+esc(r.name)+'</td><td>'+(Number.isFinite(r.price)?fmt(r.price):'—')+'</td><td><input type="number" min="1" step="1" data-villageqty="'+esc(n.id)+'" value="'+n.quantity+'" aria-label="'+esc(r.village+' '+r.name)+' 需求數量" style="width:100px"></td><td><button type="button" data-villageremove="'+esc(n.id)+'">移除</button></td></tr>'}):'<p class="hint">選擇村莊與物資、填寫數量後加入；可累積不同村莊的多項需求。</p>';
  document.querySelectorAll('[data-villageremove]').forEach(b=>b.onclick=()=>{villageNeeds=villageNeeds.filter(r=>r.id!==b.dataset.villageremove);save('starcg-village-needs',villageNeeds);villageNeedRender()});
  document.querySelectorAll('[data-villageqty]').forEach(b=>b.onchange=()=>{const quantity=Number(b.value);if(!Number.isSafeInteger(quantity)||quantity<1){toast('數量請填正整數。');villageNeedRender();return}villageNeeds.find(r=>r.id===b.dataset.villageqty).quantity=quantity;save('starcg-village-needs',villageNeeds)});
 }
 function villageRender(){
  const village=$('village').value,rows=villageShops.filter(r=>r.village===village);
- $('villageitem').innerHTML='<option value="">'+(rows.length?'請選擇物資':'請先選擇村莊')+'</option>'+rows.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.name)+'</option>').join('');
+ $('villageitem').innerHTML='<option value="">'+(rows.length?'請選擇物資':'請先選擇村莊')+'</option>'+rows.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.name)+(Number.isFinite(r.price)?' · 售價 '+fmt(r.price):'')+'</option>').join('');
  $('villageitem').disabled=!rows.length;$('addvillage').disabled=true;$('villageqty').value='';
- $('villagehint').textContent=rows.length?village+'：選擇本次任務物資，再填寫數量。':'先選村莊，物資選單會顯示該村的原程式標示。';villageNeedRender();
+ $('villagehint').textContent=rows.length?village+'：選擇本次任務物資，再填寫數量。':'先選擇村莊，再選擇需要的物資。';villageNeedRender();
 }
 $('village').innerHTML='<option value="">請選擇村莊</option>'+[...new Set(villageShops.map(r=>r.village))].map(v=>'<option>'+esc(v)+'</option>').join('');$('village').onchange=villageRender;
 $('villageitem').onchange=()=>{$('addvillage').disabled=!$('villageitem').value};
