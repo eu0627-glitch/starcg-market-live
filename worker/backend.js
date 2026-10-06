@@ -103,6 +103,9 @@ async function searchMarketUncached(q,servers,exact) {
 }
 export const backend={async fetch(request) {
   const u=new URL(request.url);
+  if(u.pathname==='/api/pet-catalog') {
+    try {const result=await cachedQuery('official-pet-guide-v1',async()=>{const response=await officialFetch('https://guide.starcg.net/data/pets.json',{headers:{Accept:'application/json'},timeoutMs:12000});if(!response.ok)throw Error('寵物圖鑑暫時無法取得');const data=await response.json();if(!Array.isArray(data))throw Error('寵物圖鑑格式不符');return {data,source:'https://guide.starcg.net/data/pets.json'}},86400000);return Response.json(result,{headers:{'cache-control':'public,max-age=3600'}})}catch(e){return Response.json({error:'官方寵物圖鑑暫時無法取得。'},{status:502})}
+  }
   if(u.pathname==='/api/history') {
     const q=(u.searchParams.get('q')||'').trim(),days=u.searchParams.get('days')||'30',currency=u.searchParams.get('currency')||'all',type=u.searchParams.get('type')||'all';
     if(!q||q.length>80||!['7','30','90','all'].includes(days)||!['all','魔幣','魔晶'].includes(currency)||!['all','item','pet'].includes(type))return Response.json({error:'查詢參數格式錯誤。'},{status:400});
