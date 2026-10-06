@@ -63,3 +63,5 @@ await vm.runInContext('search()',c);assert.equal(equipmentRequests.length,1);con
 equipmentRequests=[];vm.runInContext(`$('server').value='all';$('equipmentname').value='剛毅';`,c);await vm.runInContext("$('equipmentname').onchange()",c);assert.equal(equipmentRequests.length,2);assert.equal(new URL(equipmentRequests[1],'https://test').searchParams.get('q'),'剛毅');assert.equal(new URL(equipmentRequests[0],'https://test').searchParams.get('exact'),'1');
 vm.runInContext(`clearEquipment();$('query').value='火兔';`,c);assert.equal(elements.get('equipmentcategory').value,'');
 console.log('Official equipment category, level, single-server request and item-specific history checks passed');
+
+vm.runInContext(`marketIncomplete=true;marketState='ready';liveRows=[];render()`,c);assert.match(elements.get('listings').innerHTML,/查詢未完整，不能判定/);
