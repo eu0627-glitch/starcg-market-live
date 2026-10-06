@@ -122,25 +122,41 @@
   {
     "id": "v5-0",
     "village": "加納村",
-    "name": "野外",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "野外應急包",
+    "source": "使用者提供的加納村遊戲商店截圖",
+    "price": 800,
+    "merchant": "雲游商人"
   },
   {
     "id": "v5-1",
     "village": "加納村",
-    "name": "寶石",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "沙漠寶石",
+    "source": "使用者提供的加納村遊戲商店截圖",
+    "price": 900,
+    "merchant": "雲游商人"
   },
   {
     "id": "v5-2",
     "village": "加納村",
     "name": "清水",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "source": "使用者提供的加納村遊戲商店截圖",
+    "price": 1500,
+    "merchant": "雲游商人"
   },
   {
     "id": "v5-3",
     "village": "加納村",
-    "name": "法杖",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "實用的法杖",
+    "source": "使用者提供的加納村遊戲商店截圖",
+    "price": 1200,
+    "merchant": "雲游商人"
+  },
+  {
+    "id": "v5-4",
+    "village": "加納村",
+    "name": "湯圓豆沙",
+    "price": 5,
+    "merchant": "雲游商人",
+    "source": "使用者提供的加納村遊戲商店截圖"
   }
 ]
