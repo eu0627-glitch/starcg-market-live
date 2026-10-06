@@ -1,4 +1,8 @@
 import {petCatalog} from './pet-catalog.js';
+import {equipmentCatalog} from './equipment-catalog.js';
+export function matchesEquipment(row,category,level='all') {
+  return row.type==='item' && equipmentCatalog.some(e=>e.name===row.name&&e.category===category&&(level==='all'||e.level===Number(level)));
+}
 const queryCache = new Map(),inFlight=new Map();let upstreamTail=Promise.resolve(),nextUpstreamAt=0,upstreamCooldownUntil=0;
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function officialFetch(url,options){const task=upstreamTail.catch(()=>{}).then(async()=>{if(Date.now()<upstreamCooldownUntil)throw Error('官方服務正在限制查詢或暫時忙碌，請稍後重試。');await delay(Math.max(0,nextUpstreamAt-Date.now()));const {timeoutMs=12000,...fetchOptions}=options;const response=await fetch(url,{...fetchOptions,signal:AbortSignal.timeout(timeoutMs)});nextUpstreamAt=Date.now()+1000;if([429,503].includes(response.status)){const seconds=Number(response.headers.get('retry-after'));upstreamCooldownUntil=Date.now()+Math.min(120000,Math.max(30000,Number.isFinite(seconds)?seconds*1000:0));throw Error(response.status===429?'官方限制查詢頻率，請稍後重試。':'官方查詢服務暫時忙碌，請稍後重試。')}return response});upstreamTail=task.then(()=>{},()=>{});return task}
@@ -105,10 +109,12 @@ export const backend={async fetch(request) {
     try{return Response.json(await searchHistory(q,days,currency,type,u.searchParams.get('retry')==='1'),{headers:{'cache-control':'no-store'}})}catch(e){return Response.json({error:e.message},{status:502})}
   }
   if(u.pathname==='/api/search') {
-    const q=(u.searchParams.get('q')||'').trim(),server=u.searchParams.get('server')||'all';
-    if(!q||q.length>80)return Response.json({error:'請輸入 1 至 80 字的物品名稱。'},{status:400});
+    const q=(u.searchParams.get('q')||'').trim(),server=u.searchParams.get('server')||'all',category=u.searchParams.get('category')||'',level=u.searchParams.get('level')||'all';
+    if(category&&!equipmentCatalog.some(e=>e.category===category))return Response.json({error:'裝備分類格式錯誤。'},{status:400});
+    if(level!=='all'&&(!category||!/^\d+$/.test(level)||!equipmentCatalog.some(e=>e.category===category&&e.level===Number(level))))return Response.json({error:'裝備級別格式錯誤。'},{status:400});
+    if((!q&&!category)||q.length>80)return Response.json({error:'請輸入物品名稱或選擇裝備分類。'},{status:400});
     if(!['all','S1','S2','S3'].includes(server))return Response.json({error:'分流格式錯誤。'},{status:400});
-    try {return Response.json(await searchMarket(q,server==='all'?[1,2,3]:[Number(server.slice(1))],u.searchParams.get('exact')==='1'),{headers:{'cache-control':'no-store'}})}
+    try {const result=await searchMarket(q,server==='all'?[1,2,3]:[Number(server.slice(1))],q&&u.searchParams.get('exact')==='1');return Response.json(category?{...result,rows:result.rows.filter(row=>matchesEquipment(row,category,level)),category,level}:result,{headers:{'cache-control':'no-store'}})}
     catch(e){return Response.json({error:e.message,status:'upstream_unavailable'},{status:502,headers:{'cache-control':'no-store'}})}
   }
   if(u.pathname!=='/')return new Response('Not found',{status:404});

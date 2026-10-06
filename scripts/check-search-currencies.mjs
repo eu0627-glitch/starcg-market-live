@@ -49,3 +49,17 @@ const allServerRows=normalizeMarket({stalls:[{cdkey:'g',server:1},{cdkey:'c',ser
 const original=globalThis.fetch;const queries=[];globalThis.fetch=async input=>{const u=new URL(input),currency=u.searchParams.get('currency');queries.push(currency);return Response.json({logs:[{id:currency,item_name:'月球水兔',buff:'購買寵物',qty:1,unit_gross_price:currency==='gold'?100:3,ts:1791214355,pricetype:currency==='gold'?0:1}],totalFiltered:1})};
 const response=await worker.fetch(new Request('https://test/api/history?q=月球水兔&currency=all&days=7'));assert.equal(response.status,200);const payload=await response.json();assert.equal(payload.rows.length,2);assert.deepEqual(new Set(queries),new Set(['gold','gem']));assert.equal(payload.perCurrency['魔晶'].loaded,1);globalThis.fetch=original;
 console.log('Combined currency search, separate statistics/charts, per-currency lowest listing, partial names, pet nicknames and immediate listings before slow history passed.');
+// Official category lookup: names without a weapon keyword and misleading names stay in their real category.
+assert.equal(vm.runInContext("equipmentCatalog.find(e=>e.name==='剛毅').category",c),'劍');
+assert.equal(vm.runInContext("equipmentCatalog.find(e=>e.name==='青龍刀').category",c),'劍');
+assert.equal(vm.runInContext("equipmentCatalog.find(e=>e.name==='小圓盾').level",c),1);
+c.equipmentFixtures=[{...base,name:'剛毅',nickname:'',type:'item',status:'listing',price:100,currency:'魔幣'},{...base,name:'長劍',nickname:'',type:'item',status:'listing',price:50,currency:'魔晶'},{...base,name:'不存在的劍',nickname:'',type:'item',status:'listing',price:1,currency:'魔幣'},{...base,name:'剛毅',nickname:'',type:'pet',status:'listing',price:1,currency:'魔幣'}];
+vm.runInContext(`$('sourceMode').value='local';$('currency').value='all';$('server').value='all';$('equipmentcategory').value='劍';$('equipmentlevel').value='all';$('type').value='item';$('query').value='';$('variant').value='all';data=equipmentFixtures;`,c);
+assert.equal(vm.runInContext('filterRows(data).length',c),2);
+vm.runInContext(`$('equipmentlevel').value='11'`,c);assert.equal(vm.runInContext('filterRows(data)[0].name',c),'剛毅');assert.equal(vm.runInContext('filterRows(data).length',c),1);
+let equipmentRequests=[];c.fetch=async path=>{equipmentRequests.push(path);return Response.json({rows:c.equipmentFixtures,total:0,warnings:[]})};
+vm.runInContext(`$('sourceMode').value='official';$('server').value='S2';$('equipmentlevel').value='all';$('lowgold').checked=false;$('lowgem').checked=false;`,c);
+await vm.runInContext('search()',c);assert.equal(equipmentRequests.length,1);const categoryRequest=new URL(equipmentRequests[0],'https://test');assert.equal(categoryRequest.searchParams.get('category'),'劍');assert.equal(categoryRequest.searchParams.get('q'),'');assert.equal(categoryRequest.searchParams.get('server'),'S2');assert.equal(vm.runInContext('listings.length',c),0); // Fixture rows belong to S1, so none may leak into S2.
+equipmentRequests=[];vm.runInContext(`$('server').value='all';$('equipmentname').value='剛毅';`,c);await vm.runInContext("$('equipmentname').onchange()",c);assert.equal(equipmentRequests.length,2);assert.equal(new URL(equipmentRequests[1],'https://test').searchParams.get('q'),'剛毅');assert.equal(new URL(equipmentRequests[0],'https://test').searchParams.get('exact'),'1');
+vm.runInContext(`clearEquipment();$('query').value='火兔';`,c);assert.equal(elements.get('equipmentcategory').value,'');
+console.log('Official equipment category, level, single-server request and item-specific history checks passed');
