@@ -23,7 +23,6 @@ vm.runInContext(`$('village').value='聖拉魯卡村';villageRender()`,c);for(co
 const beforeVillageBatch=vm.runInContext('JSON.stringify(batch)',c);vm.runInContext(`$('villageitem').value='v0-0';$('villageitem').onchange();$('villageqty').value='3';$('addvillage').onclick();$('villageqty').value='2';$('addvillage').onclick();`,c);assert.equal(vm.runInContext('villageNeeds[0].quantity',c),5);assert.match(elements.get('villageshops').innerHTML,/精煉的鋼錠/);assert.equal(vm.runInContext('JSON.stringify(batch)',c),beforeVillageBatch);
 vm.runInContext(`$('village').value='伊爾村';villageRender()`,c);assert.match(elements.get('villageitem').innerHTML,/番茄/);assert.doesNotMatch(elements.get('villageitem').innerHTML,/精煉的鋼錠/);assert.match(elements.get('villageshops').innerHTML,/精煉的鋼錠/);vm.runInContext(`$('villageitem').value='v1-0';$('villageqty').value='0';$('addvillage').onclick()`,c);assert.equal(vm.runInContext('villageNeeds.length',c),1);
 
-vm.runInContext(`batch=[];$('batchname').value='妖草的血';$('batchqty').value='3';$('batchtype').value='item';$('addbatch').onclick();`,c);assert.equal(vm.runInContext('mergeNeeds(batch)[0].missing',c),3);
 assert.match(html,/<h1>市價觀測站<\/h1>/);assert.match(html,/<summary>使用說明<\/summary>/);
 // A slow history request must not block visible listings.
 // A failed commodity stays unknown; retry fetches only that commodity and retains successful shops.
@@ -54,7 +53,7 @@ assert.equal(vm.runInContext("equipmentCatalog.find(e=>e.name==='剛毅').catego
 assert.equal(vm.runInContext("equipmentCatalog.find(e=>e.name==='青龍刀').category",c),'劍');
 assert.equal(vm.runInContext("equipmentCatalog.find(e=>e.name==='小圓盾').level",c),1);
 c.equipmentFixtures=[{...base,name:'剛毅',nickname:'',type:'item',status:'listing',price:100,currency:'魔幣'},{...base,name:'長劍',nickname:'',type:'item',status:'listing',price:50,currency:'魔晶'},{...base,name:'不存在的劍',nickname:'',type:'item',status:'listing',price:1,currency:'魔幣'},{...base,name:'剛毅',nickname:'',type:'pet',status:'listing',price:1,currency:'魔幣'}];
-vm.runInContext(`$('sourceMode').value='local';$('currency').value='all';$('server').value='all';$('equipmentcategory').value='劍';$('equipmentlevel').value='all';$('type').value='item';$('query').value='';$('variant').value='all';data=equipmentFixtures;`,c);
+vm.runInContext(`$('sourceMode').value='local';$('currency').value='all';$('server').value='all';$('equipmentcategory').value='劍';$('equipmentlevel').value='all';$('type').value='equipment';$('query').value='';$('variant').value='all';data=equipmentFixtures;`,c);
 assert.equal(vm.runInContext('filterRows(data).length',c),2);
 vm.runInContext(`$('equipmentlevel').value='11'`,c);assert.equal(vm.runInContext('filterRows(data)[0].name',c),'剛毅');assert.equal(vm.runInContext('filterRows(data).length',c),1);
 let equipmentRequests=[];c.fetch=async path=>{equipmentRequests.push(path);return Response.json({rows:c.equipmentFixtures,total:0,warnings:[]})};
@@ -68,7 +67,7 @@ vm.runInContext(`marketIncomplete=true;marketState='ready';liveRows=[];render()`
 
 // Switching to pets clears equipment state without overriding the user's chosen type.
 vm.runInContext(`$('equipmentcategory').value='劍';$('query').value='長劍';$('type').value='pet';$('type').onchange()`,c);assert.equal(elements.get('type').value,'pet');assert.equal(elements.get('equipmentcategory').value,'');assert.equal(elements.get('equipmentcategoryfield').hidden,true);assert.equal(elements.get('equipmentcategory').disabled,true);assert.equal(elements.get('query').value,'');
-vm.runInContext(`$('type').value='item';$('type').onchange()`,c);assert.equal(elements.get('equipmentcategoryfield').hidden,false);assert.equal(elements.get('equipmentcategory').disabled,false);
+vm.runInContext(`$('type').value='equipment';$('type').onchange()`,c);assert.equal(elements.get('equipmentcategoryfield').hidden,false);assert.equal(elements.get('equipmentcategory').disabled,false);
 assert.doesNotMatch(elements.get('villageshops').innerHTML,/選擇村莊與物資/);
 
 // Pet classification uses catalog names and excludes items and unknown metadata.
@@ -76,5 +75,9 @@ vm.runInContext(`$('type').value='pet';$('type').onchange();$('petrace').value='
 assert.equal(vm.runInContext("matchesPetClass({name:'月球水兔',type:'pet'})",c),true);assert.equal(vm.runInContext("matchesPetClass({name:'月球水兔',type:'item'})",c),false);assert.equal(vm.runInContext("matchesPetClass({name:'未知寵物',type:'pet'})",c),false);
 equipmentRequests=[];c.fetch=async path=>{equipmentRequests.push(path);return Response.json({rows:[],total:0,warnings:[]})};vm.runInContext(`$('sourceMode').value='official';$('query').value=''`,c);await vm.runInContext('search()',c);assert.equal(equipmentRequests.length,1);assert.equal(new URL(equipmentRequests[0],'https://test').searchParams.get('petRace'),'金屬系');assert.equal(new URL(equipmentRequests[0],'https://test').searchParams.has('category'),false);
 equipmentRequests=[];vm.runInContext(`$('petname').value='月球水兔'`,c);await vm.runInContext("$('petname').onchange()",c);assert.equal(equipmentRequests.length,2);assert.equal(new URL(equipmentRequests[1],'https://test').searchParams.get('q'),'月球水兔');
-vm.runInContext(`$('type').value='item';$('type').onchange()`,c);assert.equal(elements.get('petracefield').hidden,true);assert.equal(elements.get('petrace').value,'');assert.equal(elements.get('equipmentcategoryfield').hidden,false);
+vm.runInContext(`$('type').value='equipment';$('type').onchange()`,c);assert.equal(elements.get('petracefield').hidden,true);assert.equal(elements.get('petrace').value,'');assert.equal(elements.get('equipmentcategoryfield').hidden,false);
 console.log('Pet race/card/name controls, mutual exclusion and item-specific history passed');
+
+assert.doesNotMatch(html,/自訂採購商品|村莊領取清單|id="addbatch"/);
+vm.runInContext(`$('type').value='item';$('type').onchange();$('query').value='長劍';$('exact').checked=true;data=equipmentFixtures;`,c);assert.equal(vm.runInContext('filterRows(data).length',c),0);assert.equal(elements.get('equipmentcategoryfield').hidden,true);
+vm.runInContext(`$('type').value='all';$('type').onchange()`,c);assert.equal(elements.get('equipmentcategoryfield').hidden,true);assert.equal(elements.get('petracefield').hidden,true);
