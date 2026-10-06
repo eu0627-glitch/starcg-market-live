@@ -1,5 +1,7 @@
 import {petCatalog} from './pet-catalog.js';
 import {equipmentCatalog} from './equipment-catalog.js';
+import {petClassification} from './pet-classification.js';
+export function matchesPetClassification(row,race='',card='') {const meta=petClassification[row.name];return row.type==='pet'&&!!meta&&(!race||meta.race===race)&&(!card||meta.card===card)}
 export function matchesEquipment(row,category,level='all') {
   return row.type==='item' && equipmentCatalog.some(e=>e.name===row.name&&e.category===category&&(level==='all'||e.level===Number(level)));
 }
@@ -113,11 +115,13 @@ export const backend={async fetch(request) {
   }
   if(u.pathname==='/api/search') {
     const q=(u.searchParams.get('q')||'').trim(),server=u.searchParams.get('server')||'all',category=u.searchParams.get('category')||'',level=u.searchParams.get('level')||'all';
+    const petRace=u.searchParams.get('petRace')||'',petCard=u.searchParams.get('petCard')||'',petFilter=!!(petRace||petCard);
+    if((category&&petFilter)||(petRace&&!Object.values(petClassification).some(e=>e.race===petRace))||(petCard&&!['金卡','銀卡','普卡'].includes(petCard)))return Response.json({error:'寵物分類格式錯誤。'},{status:400});
     if(category&&!equipmentCatalog.some(e=>e.category===category))return Response.json({error:'裝備分類格式錯誤。'},{status:400});
     if(level!=='all'&&(!category||!/^\d+$/.test(level)||!equipmentCatalog.some(e=>e.category===category&&e.level===Number(level))))return Response.json({error:'裝備級別格式錯誤。'},{status:400});
-    if((!q&&!category)||q.length>80)return Response.json({error:'請輸入物品名稱或選擇裝備分類。'},{status:400});
+    if((!q&&!category&&!petFilter)||q.length>80)return Response.json({error:'請輸入名稱或選擇分類。'},{status:400});
     if(!['all','S1','S2','S3'].includes(server))return Response.json({error:'分流格式錯誤。'},{status:400});
-    try {const result=await searchMarket(q,server==='all'?[1,2,3]:[Number(server.slice(1))],q&&u.searchParams.get('exact')==='1');return Response.json(category?{...result,rows:result.rows.filter(row=>matchesEquipment(row,category,level)),category,level}:result,{headers:{'cache-control':'no-store'}})}
+    try {const result=await searchMarket(q,server==='all'?[1,2,3]:[Number(server.slice(1))],q&&u.searchParams.get('exact')==='1');return Response.json(category?{...result,rows:result.rows.filter(row=>matchesEquipment(row,category,level)),category,level}:petFilter?{...result,rows:result.rows.filter(row=>matchesPetClassification(row,petRace,petCard)),petRace,petCard}:result,{headers:{'cache-control':'no-store'}})}
     catch(e){return Response.json({error:e.message,status:'upstream_unavailable'},{status:502,headers:{'cache-control':'no-store'}})}
   }
   if(u.pathname!=='/')return new Response('Not found',{status:404});

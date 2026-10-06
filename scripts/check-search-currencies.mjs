@@ -65,3 +65,16 @@ vm.runInContext(`clearEquipment();$('query').value='火兔';`,c);assert.equal(el
 console.log('Official equipment category, level, single-server request and item-specific history checks passed');
 
 vm.runInContext(`marketIncomplete=true;marketState='ready';liveRows=[];render()`,c);assert.match(elements.get('listings').innerHTML,/查詢未完整，不能判定/);
+
+// Switching to pets clears equipment state without overriding the user's chosen type.
+vm.runInContext(`$('equipmentcategory').value='劍';$('query').value='長劍';$('type').value='pet';$('type').onchange()`,c);assert.equal(elements.get('type').value,'pet');assert.equal(elements.get('equipmentcategory').value,'');assert.equal(elements.get('equipmentcategoryfield').hidden,true);assert.equal(elements.get('equipmentcategory').disabled,true);assert.equal(elements.get('query').value,'');
+vm.runInContext(`$('type').value='item';$('type').onchange()`,c);assert.equal(elements.get('equipmentcategoryfield').hidden,false);assert.equal(elements.get('equipmentcategory').disabled,false);
+assert.doesNotMatch(elements.get('villageshops').innerHTML,/選擇村莊與物資/);
+
+// Pet classification uses catalog names and excludes items and unknown metadata.
+vm.runInContext(`$('type').value='pet';$('type').onchange();$('petrace').value='金屬系';$('petcard').value='普卡';petClassControls()`,c);assert.equal(elements.get('equipmentcategoryfield').hidden,true);assert.equal(elements.get('petracefield').hidden,false);assert.match(elements.get('petname').innerHTML,/月球水兔/);assert.doesNotMatch(elements.get('petname').innerHTML,/迷你蝙蝠/);
+assert.equal(vm.runInContext("matchesPetClass({name:'月球水兔',type:'pet'})",c),true);assert.equal(vm.runInContext("matchesPetClass({name:'月球水兔',type:'item'})",c),false);assert.equal(vm.runInContext("matchesPetClass({name:'未知寵物',type:'pet'})",c),false);
+equipmentRequests=[];c.fetch=async path=>{equipmentRequests.push(path);return Response.json({rows:[],total:0,warnings:[]})};vm.runInContext(`$('sourceMode').value='official';$('query').value=''`,c);await vm.runInContext('search()',c);assert.equal(equipmentRequests.length,1);assert.equal(new URL(equipmentRequests[0],'https://test').searchParams.get('petRace'),'金屬系');assert.equal(new URL(equipmentRequests[0],'https://test').searchParams.has('category'),false);
+equipmentRequests=[];vm.runInContext(`$('petname').value='月球水兔'`,c);await vm.runInContext("$('petname').onchange()",c);assert.equal(equipmentRequests.length,2);assert.equal(new URL(equipmentRequests[1],'https://test').searchParams.get('q'),'月球水兔');
+vm.runInContext(`$('type').value='item';$('type').onchange()`,c);assert.equal(elements.get('petracefield').hidden,true);assert.equal(elements.get('petrace').value,'');assert.equal(elements.get('equipmentcategoryfield').hidden,false);
+console.log('Pet race/card/name controls, mutual exclusion and item-specific history passed');
