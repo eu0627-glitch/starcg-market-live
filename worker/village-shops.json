@@ -130,26 +130,34 @@
   {
     "id": "v4-0",
     "village": "奇利村",
-    "name": "火鼠",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "火焰鼠娃娃",
+    "source": "使用者提供的奇利村遊戲商店截圖",
+    "price": 700,
+    "merchant": "雲游商人"
   },
   {
     "id": "v4-1",
     "village": "奇利村",
-    "name": "水蛛",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "水蜘蛛的絲",
+    "source": "使用者提供的奇利村遊戲商店截圖",
+    "price": 800,
+    "merchant": "雲游商人"
   },
   {
     "id": "v4-2",
     "village": "奇利村",
-    "name": "牛肉",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "上品牛肉",
+    "source": "使用者提供的奇利村遊戲商店截圖",
+    "price": 1200,
+    "merchant": "雲游商人"
   },
   {
     "id": "v4-3",
     "village": "奇利村",
-    "name": "醫療",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "應急醫療箱",
+    "source": "使用者提供的奇利村遊戲商店截圖",
+    "price": 800,
+    "merchant": "雲游商人"
   },
   {
     "id": "v5-0",
@@ -198,5 +206,13 @@
     "price": 3,
     "merchant": "雲游商人",
     "source": "使用者提供的亞留特村遊戲商店截圖"
+  },
+  {
+    "id": "v4-4",
+    "village": "奇利村",
+    "name": "精制米粉",
+    "price": 6,
+    "merchant": "雲游商人",
+    "source": "使用者提供的奇利村遊戲商店截圖"
   }
 ]
