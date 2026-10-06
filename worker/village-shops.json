@@ -34,26 +34,34 @@
   {
     "id": "v1-0",
     "village": "伊爾村",
-    "name": "番茄",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "番茄蔬菜湯",
+    "source": "使用者提供的伊爾村遊戲商店截圖",
+    "price": 300,
+    "merchant": "雲游商人"
   },
   {
     "id": "v1-1",
     "village": "伊爾村",
-    "name": "布丁",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "巧克力芒果布丁",
+    "source": "使用者提供的伊爾村遊戲商店截圖",
+    "price": 500,
+    "merchant": "雲游商人"
   },
   {
     "id": "v1-2",
     "village": "伊爾村",
-    "name": "生命",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "生命藥劑包",
+    "source": "使用者提供的伊爾村遊戲商店截圖",
+    "price": 700,
+    "merchant": "雲游商人"
   },
   {
     "id": "v1-3",
     "village": "伊爾村",
-    "name": "料理",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "美味料理箱",
+    "source": "使用者提供的伊爾村遊戲商店截圖",
+    "price": 800,
+    "merchant": "雲游商人"
   },
   {
     "id": "v2-0",
