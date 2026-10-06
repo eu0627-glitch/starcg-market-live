@@ -90,26 +90,34 @@
   {
     "id": "v3-0",
     "village": "亞留特村",
-    "name": "藥劑",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "實驗藥劑",
+    "source": "使用者提供的亞留特村遊戲商店截圖",
+    "price": 700,
+    "merchant": "雲游商人"
   },
   {
     "id": "v3-1",
     "village": "亞留特村",
-    "name": "羽毛",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "鳥人的羽毛",
+    "source": "使用者提供的亞留特村遊戲商店截圖",
+    "price": 500,
+    "merchant": "雲游商人"
   },
   {
     "id": "v3-2",
     "village": "亞留特村",
-    "name": "回力",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "實用的回力",
+    "source": "使用者提供的亞留特村遊戲商店截圖",
+    "price": 900,
+    "merchant": "雲游商人"
   },
   {
     "id": "v3-3",
     "village": "亞留特村",
-    "name": "小刀",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "實用的小刀",
+    "source": "使用者提供的亞留特村遊戲商店截圖",
+    "price": 900,
+    "merchant": "雲游商人"
   },
   {
     "id": "v4-0",
@@ -174,5 +182,13 @@
     "price": 5,
     "merchant": "雲游商人",
     "source": "使用者提供的加納村遊戲商店截圖"
+  },
+  {
+    "id": "v3-4",
+    "village": "亞留特村",
+    "name": "芝麻",
+    "price": 3,
+    "merchant": "雲游商人",
+    "source": "使用者提供的亞留特村遊戲商店截圖"
   }
 ]
