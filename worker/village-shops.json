@@ -1,0 +1,146 @@
+[
+  {
+    "id": "v0-0",
+    "village": "聖拉魯卡村",
+    "name": "鋼錠",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v0-1",
+    "village": "聖拉魯卡村",
+    "name": "銀錠",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v0-2",
+    "village": "聖拉魯卡村",
+    "name": "長劍",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v0-3",
+    "village": "聖拉魯卡村",
+    "name": "斧頭",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v1-0",
+    "village": "伊爾村",
+    "name": "番茄",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v1-1",
+    "village": "伊爾村",
+    "name": "布丁",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v1-2",
+    "village": "伊爾村",
+    "name": "生命",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v1-3",
+    "village": "伊爾村",
+    "name": "料理",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v2-0",
+    "village": "維諾亞村",
+    "name": "水龍",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v2-1",
+    "village": "維諾亞村",
+    "name": "紅帽",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v2-2",
+    "village": "維諾亞村",
+    "name": "長槍",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v2-3",
+    "village": "維諾亞村",
+    "name": "弓箭",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v3-0",
+    "village": "亞留特村",
+    "name": "藥劑",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v3-1",
+    "village": "亞留特村",
+    "name": "羽毛",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v3-2",
+    "village": "亞留特村",
+    "name": "回力",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v3-3",
+    "village": "亞留特村",
+    "name": "小刀",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v4-0",
+    "village": "奇利村",
+    "name": "火鼠",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v4-1",
+    "village": "奇利村",
+    "name": "水蛛",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v4-2",
+    "village": "奇利村",
+    "name": "牛肉",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v4-3",
+    "village": "奇利村",
+    "name": "醫療",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v5-0",
+    "village": "加納村",
+    "name": "野外",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v5-1",
+    "village": "加納村",
+    "name": "寶石",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v5-2",
+    "village": "加納村",
+    "name": "清水",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  },
+  {
+    "id": "v5-3",
+    "village": "加納村",
+    "name": "法杖",
+    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+  }
+]

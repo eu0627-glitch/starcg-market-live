@@ -1,0 +1,7 @@
+name = "starcg-market-live"
+main = "dist/server/index.js"
+compatibility_date = "2026-10-06"
+workers_dev = true
+
+[build]
+command = "npm run build"
