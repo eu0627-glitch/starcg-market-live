@@ -58,26 +58,34 @@
   {
     "id": "v2-0",
     "village": "維諾亞村",
-    "name": "水龍",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "水龍的鱗",
+    "source": "使用者提供的維諾亞村遊戲商店截圖",
+    "price": 1000,
+    "merchant": "雲游商人"
   },
   {
     "id": "v2-1",
     "village": "維諾亞村",
-    "name": "紅帽",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "紅色哥布林頭盔",
+    "source": "使用者提供的維諾亞村遊戲商店截圖",
+    "price": 800,
+    "merchant": "雲游商人"
   },
   {
     "id": "v2-2",
     "village": "維諾亞村",
-    "name": "長槍",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "實用的長槍",
+    "source": "使用者提供的維諾亞村遊戲商店截圖",
+    "price": 1000,
+    "merchant": "雲游商人"
   },
   {
     "id": "v2-3",
     "village": "維諾亞村",
-    "name": "弓箭",
-    "source": "StarCGV1.3.exe/menu_data.py/REWARDS_MAP"
+    "name": "實用的弓箭",
+    "source": "使用者提供的維諾亞村遊戲商店截圖",
+    "price": 1000,
+    "merchant": "雲游商人"
   },
   {
     "id": "v3-0",
