@@ -12,5 +12,5 @@
     "dev": "npx wrangler@4.147.0 dev",
     "deploy": "npx wrangler@4.147.0 deploy"
   },
-  "version": "1.2.1"
+  "version": "1.2.2"
 }

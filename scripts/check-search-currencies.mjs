@@ -2,7 +2,7 @@ import vm from 'node:vm';import assert from 'node:assert/strict';import worker f
 const html=await (await worker.fetch(new Request('https://test/'))).text(),script=html.match(/<script>([\s\S]*)<\/script>/)[1];
 const elements=new Map();for(const m of html.matchAll(/<([a-z]+)\b([^>]*\bid="([^"]+)"[^>]*)>/g)){const [tag,attrs,id]=[m[1],m[2],m[3]];let value=attrs.match(/\bvalue="([^"]*)"/)?.[1]||'';if(tag==='select'){const rest=html.slice(m.index+m[0].length).split('</select>')[0],o=rest.match(/<option(?:\s[^>]*)?>([^<]*)/);value=o?.[0].match(/value="([^"]*)"/)?.[1]??o?.[1]??'';}elements.set(id,{value,checked:/\bchecked\b/.test(attrs),innerHTML:'',textContent:'',hidden:false,dataset:{},classList:{toggle(){}},addEventListener(){}})}
 const c=vm.createContext({document:{getElementById:id=>{assert(elements.has(id),'Missing ID '+id);return elements.get(id)},querySelectorAll:()=>[]},localStorage:{getItem:()=>null,setItem(){}},setTimeout:()=>0,setInterval:()=>0,clearInterval(){},Date,URL,URLSearchParams,Blob,confirm:()=>true});vm.runInContext(script,c);
-assert.equal(elements.has('petskillsenabled'),false);assert.equal(elements.has('petskills'),false);assert.equal(elements.get('currency').value,'all');assert.equal(elements.get('exact').checked,false);
+assert.equal(elements.has('petskillsenabled'),false);assert.equal(elements.has('petskills'),true);assert.equal(elements.get('petskills').value,'all');assert.equal(elements.get('currency').value,'all');assert.equal(elements.get('exact').checked,false);
 const base={name:'月球水兔',nickname:'火兔',variant:'',type:'pet',quantity:1,server:'S1',date:new Date().toISOString()};c.fixtures=[{...base,status:'sold',currency:'魔幣',price:100},{...base,status:'sold',currency:'魔晶',price:3},{...base,status:'listing',currency:'魔幣',price:200,stall:'同攤位'},{...base,status:'listing',currency:'魔晶',price:5,stall:'同攤位'}];
 vm.runInContext(`data=fixtures;$('sourceMode').value='local';$('query').value='火兔';$('variant').value=JSON.stringify(['月球水兔','']);$('listingmode').value='cheapest';render();`,c);
 assert.equal(vm.runInContext('sold.length',c),2);assert.match(elements.get('daily').innerHTML,/成交均價/);assert.match(elements.get('min').innerHTML,/魔幣 · 100/);assert.match(elements.get('min').innerHTML,/魔晶 · 3/);assert.match(elements.get('listings').innerHTML,/200 <span[^>]*>魔幣/);assert.match(elements.get('listings').innerHTML,/5 <span[^>]*>魔晶/);assert.match(elements.get('listings').innerHTML,/火兔/);assert.equal((elements.get('chart').innerHTML.match(/<svg/g)||[]).length,2);
@@ -85,3 +85,29 @@ console.log('Pet race/card/name controls, mutual exclusion and item-specific his
 assert.doesNotMatch(html.slice(0,html.indexOf('id="release-notes"')),/自訂採購商品|村莊領取清單|id="addbatch"/);
 vm.runInContext(`$('type').value='item';$('type').onchange();$('query').value='長劍';$('exact').checked=true;data=equipmentFixtures;`,c);assert.equal(vm.runInContext('filterRows(data).length',c),0);assert.equal(elements.get('equipmentcategoryfield').hidden,true);
 vm.runInContext(`$('type').value='all';$('type').onchange()`,c);assert.equal(elements.get('equipmentcategoryfield').hidden,true);assert.equal(elements.get('petracefield').hidden,true);
+
+// Individual Slot regression: engine limits and learned skills must never override it.
+for(const slot of [6,7,8,9,10])assert.equal(petDetails({Name:'月球地兔',Slot:slot,HaveSkillLimit:10,PetSkill1:7300,PetAllocPoint:34087042}).skills,slot);
+for(const slot of [undefined,null,'',0,-1,7.5,'bad'])assert.equal(petDetails({Name:'月球地兔',Slot:slot,HaveSkillLimit:10}).skills,null);
+assert.equal(petDetails({Name:'月球地兔',Slot:'7'}).skills,7);
+assert.equal(petDetails({Name:'月球地兔',slot:7}).skills,7);
+const fullStarPoints=[24,18,12,6,0].reduce((sum,shift)=>sum+3*2**shift,0);
+assert.equal(petDetails({Name:'月球地兔',Slot:8,PetAllocPoint:fullStarPoints}).fullSkills,true);
+assert.equal(petDetails({Name:'月球地兔',Slot:7,PetAllocPoint:fullStarPoints}).fullSkills,false);
+assert.equal(petDetails({Name:'月球地兔',Slot:8,PetAllocPoint:0}).fullSkills,false);
+assert.equal(petDetails({Name:'未收錄的寵物',Slot:8,PetAllocPoint:fullStarPoints}).fullSkills,null);
+c.slotFixtures=[
+ {...base,pet:{skills:7,fullSkills:false}},
+ {...base,pet:{skills:8,fullSkills:true}},
+ {...base,pet:{skills:8,fullSkills:false}},
+ {...base,pet:{skills:null,fullSkills:null}}
+];
+vm.runInContext(`$('type').value='pet';$('petfullstar').checked=false;$('petfullgrade').checked=false;selectedPetLevels.clear();$('petskills').value='7';$('petfullskills').checked=false;`,c);
+assert.equal(vm.runInContext('slotFixtures.filter(matchesPetConditions).length',c),1);
+vm.runInContext(`$('petskills').value='8';$('petfullskills').checked=true;`,c);
+assert.equal(vm.runInContext('slotFixtures.filter(matchesPetConditions).length',c),1);
+assert.match(vm.runInContext('petSummary(slotFixtures[0].pet)',c),/總技能欄 7/);
+assert.doesNotMatch(vm.runInContext('petSummary(slotFixtures[3].pet)',c),/總技能欄/);
+vm.runInContext(`$('type').value='item'`,c);
+assert.equal(vm.runInContext('slotFixtures.filter(matchesPetConditions).length',c),4);
+console.log('Actual Slot counts, invalid/missing data, full-skill rule and combined slot filters passed');

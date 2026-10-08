@@ -50,9 +50,12 @@ async function searchHistoryUncached(q,days,currency,type,retry=false,seed=null)
 function numericField(object,key){const value=object[key];if(value===null||value===undefined||value==='')return null;const number=Number(value);return Number.isFinite(number)?number:null}
 export function unpackPetGrades(value){const n=Number(value);if(value===null||value===undefined||value===''||!Number.isInteger(n)||n<0||n>0xffffffff)return null;return [24,18,12,6,0].map(shift=>Math.floor(n/2**shift)%64)}
 export function petDetails(pet){const grades=unpackPetGrades(pet.AllocPoint),starGrades=unpackPetGrades(pet.PetAllocPoint),species=petCatalog[String(pet.Name||'').trim()];const candidate=species&&grades?species.grades.map((n,i)=>n-grades[i]):null,drops=candidate&&candidate.every(n=>Number.isInteger(n)&&n>=0&&n<=4)?candidate:null;const innate=species?25-(species.full-species.grades.reduce((a,b)=>a+b,0)):null,starCount=innate!==null&&starGrades?innate+starGrades.reduce((a,b)=>a+b,0):null,stars=starCount!==null&&starCount>=0&&starCount<=25?starCount:null;
-// Species catalog values are not the current slot count of an individual listing.
-// No verified listing field is available yet; do not substitute catalog or engine limits.
-const skills=null;return {level:numericField(pet,'Lv'),hp:numericField(pet,'Hp'),mp:numericField(pet,'ForcePoint'),bp:['Vital','Str','Tough','Quick','Magic'].map(key=>{const n=numericField(pet,key);return n===null?null:n/100}),grades,stars,starGrades,drops,totalGrades:grades?grades.reduce((a,b)=>a+b,0)+(starGrades?starGrades.reduce((a,b)=>a+b,0):0):null,attributes:['Attrib_Earth','Attrib_Water','Attrib_Fire','Attrib_Wind'].map(key=>numericField(pet,key)),skills};}
+// Slot is the individual listing field, cross-checked against the official payload.
+// Species skills are only the comparison baseline; never a fallback count.
+const slotValue=pet.Slot??pet.slot;
+const slotNumber=slotValue===null||slotValue===undefined||slotValue===''?null:Number(slotValue);
+const skills=Number.isSafeInteger(slotNumber)&&slotNumber>0?slotNumber:null;
+const fullSkills=skills!==null&&Number.isSafeInteger(species?.skills)?stars===25&&skills>=species.skills:null;return {level:numericField(pet,'Lv'),hp:numericField(pet,'Hp'),mp:numericField(pet,'ForcePoint'),bp:['Vital','Str','Tough','Quick','Magic'].map(key=>{const n=numericField(pet,key);return n===null?null:n/100}),grades,stars,starGrades,drops,totalGrades:grades?grades.reduce((a,b)=>a+b,0)+(starGrades?starGrades.reduce((a,b)=>a+b,0):0):null,fullSkills,attributes:['Attrib_Earth','Attrib_Water','Attrib_Fire','Attrib_Wind'].map(key=>numericField(pet,key)),skills};}
 export function normalizeMarket(payload, server, fetchedAt) {
   if (!Array.isArray(payload?.stalls) || !payload.itemsByCd || !payload.petsByCd) throw new Error('官方回傳格式不符，無法安全讀取價格。');
   const stalls=new Map(payload.stalls.map(s=>[String(s.cdkey),s]));
@@ -93,7 +96,7 @@ async function fetchServer(q,server,exact) {
   }catch(error){if(!rows.length)throw error;truncated=true;warnings.push(error.message+'；已保留本分流取得的攤位。')}
   return {rows,truncated,warnings};
 }
-export function searchMarket(q,servers,exact){return cachedQuery(JSON.stringify(['market-v2',q,servers,exact]),()=>searchMarketUncached(q,servers,exact),120000)}
+export function searchMarket(q,servers,exact){return cachedQuery(JSON.stringify(['market-v3',q,servers,exact]),()=>searchMarketUncached(q,servers,exact),120000)}
 async function searchMarketUncached(q,servers,exact) {
   const requested=servers.length===3?['all']:servers;
   const results=await Promise.allSettled(requested.map(s=>fetchServer(q,s,exact)));
