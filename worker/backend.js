@@ -105,20 +105,6 @@ async function searchMarketUncached(q,servers,exact) {
 }
 export const backend={async fetch(request) {
   const u=new URL(request.url);
-  // Temporary, fixed-source field verification; expires automatically.
-  if(u.pathname==='/api/verify-pet-slots' && Date.now()<Date.parse('2026-10-08T04:00:00Z')) {
-    try {
-      const response=await officialFetch('https://member.starcg.net/market.php?lang=zh',{headers:{Accept:'text/html'},timeoutMs:20000});
-      const html=await response.text();
-      const links=[...html.matchAll(/href=["']([^"']+)["']/gi)].map(m=>m[1]).filter(s=>!s.startsWith('#'));
-      const dataResponse=await officialFetch('https://member.starcg.net/market.php?ajax=1&page=1&search=%E5%85%94&type=pet&server=all&exact=0&lang=zh',{headers:{Accept:'application/json','X-Requested-With':'XMLHttpRequest'},timeoutMs:20000});
-      const data=await dataResponse.json();
-      const pets=Object.values(data.petsByCd||{}).flat().map(p=>({Name:p.Name,Lv:p.Lv,Slot:p.Slot,HaveSkillLimit:p.HaveSkillLimit,PetAllocPoint:p.PetAllocPoint,learned:[1,2,3,4,5,6,7,8,9,10].map(i=>p['PetSkill'+i]).filter(n=>Number.isFinite(Number(n))&&Number(n)>=0).length}));
-      const scripts=[...html.matchAll(/<script\b[^>]*src=["']([^"']+)["'][^>]*>/gi)].map(m=>m[1]);
-      const excerpts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(s=>/slot|skill|pet/i.test(s)).map(s=>s.slice(0,80000));
-      return Response.json({status:response.status,length:html.length,scripts,excerpts,links,pets},{headers:{'cache-control':'no-store'}});
-    } catch(e) {return Response.json({error:e.message},{status:502})}
-  }
   if(u.pathname==='/api/pet-catalog') {
     try {const result=await cachedQuery('official-pet-guide-v1',async()=>{const response=await officialFetch('https://guide.starcg.net/data/pets.json',{headers:{Accept:'application/json'},timeoutMs:12000});if(!response.ok)throw Error('寵物圖鑑暫時無法取得');const data=await response.json();if(!Array.isArray(data))throw Error('寵物圖鑑格式不符');return {data,source:'https://guide.starcg.net/data/pets.json'}},86400000);return Response.json(result,{headers:{'cache-control':'public,max-age=3600'}})}catch(e){return Response.json({error:'官方寵物圖鑑暫時無法取得。'},{status:502})}
   }
