@@ -111,7 +111,7 @@ export const backend={async fetch(request) {
       const response=await officialFetch('https://member.starcg.net/market.php?lang=zh',{headers:{Accept:'text/html'},timeoutMs:20000});
       const html=await response.text();
       const scripts=[...html.matchAll(/<script\b[^>]*src=["']([^"']+)["'][^>]*>/gi)].map(m=>m[1]);
-      const excerpts=[...html.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(m=>m[1]).filter(s=>/slot|skill|pet/i.test(s)).map(s=>s.slice(0,80000));
+      const excerpts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(s=>/slot|skill|pet/i.test(s)).map(s=>s.slice(0,80000));
       return Response.json({status:response.status,length:html.length,scripts,excerpts},{headers:{'cache-control':'no-store'}});
     } catch(e) {return Response.json({error:e.message},{status:502})}
   }
