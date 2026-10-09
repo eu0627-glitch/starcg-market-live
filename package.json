@@ -8,9 +8,9 @@
   "scripts": {
     "build": "node scripts/embed.mjs && node scripts/build.mjs",
     "validate": "node scripts/validate-artifact.mjs",
-    "check": "npm run build && npm run validate && node scripts/check-search-currencies.mjs && node scripts/check-pricing.mjs && node scripts/check-planner.mjs && node scripts/check-query-recovery.mjs",
+    "check": "npm run build && npm run validate && node scripts/check-search-currencies.mjs && node scripts/check-pricing.mjs && node scripts/check-planner.mjs && node scripts/check-catalog.mjs && node scripts/check-query-recovery.mjs",
     "dev": "npx wrangler@4.147.0 dev",
     "deploy": "npx wrangler@4.147.0 deploy"
   },
-  "version": "1.2.2"
+  "version": "1.2.4"
 }
