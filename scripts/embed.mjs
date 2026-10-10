@@ -11,5 +11,7 @@ html=html.replace('/*__VILLAGE_SHOPS__*/','const villageShops = '+await readFile
 html=html.replace('/*__FALAN_MAP__*/', 'const falanMapImage = '+JSON.stringify('data:image/png;base64,'+(await readFile('worker/falan-map.png')).toString('base64'))+';');
 const petSource=(await readFile('worker/pet-catalog.js','utf8')).replace('export const','const');
 html=html.replace('/*__PET_NAMES__*/',petSource);
+const petDirectory=(await readFile('worker/pet-directory.js','utf8')).replace(/export /g,'');
+html=html.replace('/*__PET_DIRECTORY__*/',petDirectory+'\nconst procurementCatalog=makePetDirectory(officialCatalog,petClassification,petCatalog);');
 const backend=equipment+'\n'+petClassificationSource+'\n'+petSource+'\n'+(await readFile('worker/backend.js','utf8')).replace("import {petCatalog} from './pet-catalog.js';",'').replace("import {equipmentCatalog} from './equipment-catalog.js';",'').replace("import {petClassification} from './pet-classification.js';",'');
 await writeFile('worker/index.js','const page = '+JSON.stringify(html)+';\n'+backend+'\nexport default backend;\n');
